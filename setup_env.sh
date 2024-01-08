@@ -3,7 +3,7 @@
 # print out a few things to make it easier for people to set up their environment
 #
 
-PREFIX=/opt/Xilinx
+PREFIX=/home/${USER}/xilinx
 
 XILINX_REV=$(grep -e "set[[:space:]]*REQUIRED_VIVADO_VERSION" $(find ./hdl -name adi_project_xilinx.tcl) | awk '{print $NF}' | sed 's/"//g')
 echo trying to find Vivado $XILINX_REV

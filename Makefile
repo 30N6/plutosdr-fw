@@ -7,7 +7,7 @@ TOOLS_PATH = PATH="$(CURDIR)/buildroot/output/host/bin:$(CURDIR)/buildroot/outpu
 TOOLCHAIN = $(CURDIR)/buildroot/output/host/bin/$(CROSS_COMPILE)gcc
 
 NCORES = $(shell grep -c ^processor /proc/cpuinfo)
-VIVADO_SETTINGS ?= /opt/Xilinx/Vivado/$(VIVADO_VERSION)/settings64.sh
+VIVADO_SETTINGS ?= /home/${USER}/xilinx/Vivado/$(VIVADO_VERSION)/settings64.sh
 VSUBDIRS = hdl buildroot linux u-boot-xlnx
 
 VERSION=$(shell git describe --abbrev=4 --dirty --always --tags)
@@ -133,10 +133,9 @@ build/system_top.xsa:  | build
 ifeq (1, ${HAVE_VIVADO})
 	bash -c "source $(VIVADO_SETTINGS) && make -C hdl/projects/$(TARGET) && cp hdl/projects/$(TARGET)/$(TARGET).sdk/system_top.xsa $@"
 	unzip -l $@ | grep -q ps7_init || cp hdl/projects/$(TARGET)/$(TARGET).srcs/sources_1/bd/system/ip/system_sys_ps7_0/ps7_init* build/
-else ifneq ($(XSA_FILE),)
-	cp $(XSA_FILE) $@
-else ifneq ($(XSA_URL),)
-	wget -T 3 -t 1 -N --directory-prefix build $(XSA_URL)
+else
+	$(error "Vivado not found")
+	exit 1
 endif
 
 ### TODO: Build system_top.xsa from src if dl fails ...
@@ -146,7 +145,8 @@ build/sdk/fsbl/Release/fsbl.elf build/system_top.bit : build/system_top.xsa
 ifeq (1, ${HAVE_VIVADO})
 	bash -c "source $(VIVADO_SETTINGS) && xsct scripts/create_fsbl_project.tcl"
 else
-	unzip -o build/system_top.xsa system_top.bit -d build
+	$(error "Vivado not found")
+	exit 1
 endif
 
 build/boot.bin: build/sdk/fsbl/Release/fsbl.elf build/u-boot.elf
