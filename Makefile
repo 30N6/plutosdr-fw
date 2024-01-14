@@ -30,6 +30,8 @@ endif
 TARGET ?= pluto
 SUPPORTED_TARGETS:=pluto sidekiqz2
 
+HDL_TARGET ?= pluto_adsb
+
 # Include target specific constants
 include scripts/$(TARGET).mk
 
@@ -131,8 +133,8 @@ build/$(TARGET).itb: u-boot-xlnx/tools/mkimage build/zImage build/rootfs.cpio.gz
 
 build/system_top.xsa:  | build
 ifeq (1, ${HAVE_VIVADO})
-	bash -c "source $(VIVADO_SETTINGS) && make -C hdl/projects/$(TARGET) && cp hdl/projects/$(TARGET)/$(TARGET).sdk/system_top.xsa $@"
-	unzip -l $@ | grep -q ps7_init || cp hdl/projects/$(TARGET)/$(TARGET).srcs/sources_1/bd/system/ip/system_sys_ps7_0/ps7_init* build/
+	bash -c "source $(VIVADO_SETTINGS) && make -C hdl/projects/$(HDL_TARGET) && cp hdl/projects/$(HDL_TARGET)/$(HDL_TARGET).sdk/system_top.xsa $@"
+	unzip -l $@ | grep -q ps7_init || cp hdl/projects/$(HDL_TARGET)/$(HDL_TARGET).srcs/sources_1/bd/system/ip/system_sys_ps7_0/ps7_init* build/
 else
 	$(error "Vivado not found")
 	exit 1
