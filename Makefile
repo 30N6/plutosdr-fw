@@ -30,7 +30,7 @@ endif
 TARGET ?= pluto
 SUPPORTED_TARGETS:=pluto sidekiqz2
 
-HDL_TARGET ?= pluto_esm
+HDL_TARGET ?= pluto_ecm
 
 # Include target specific constants
 include scripts/$(TARGET).mk
